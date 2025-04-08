@@ -1,0 +1,7 @@
+#Mon, 31 Mar 2025 17:50:48 +0200
+#Ant properties
+#Mon Mar 31 17:50:48 CEST 2025
+p.Version=1.0.0
+
+dvt.activity.name=RTOS Analyzer/Execution Analysis
+dvt.factory.activity=${dvt.basepath}common/analysis/usecases/dvt/SA_Execution.control.xml
