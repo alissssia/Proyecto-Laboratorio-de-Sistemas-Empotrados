@@ -11,9 +11,12 @@
 #include "utils/uartstdio.h"
 
 // buffers
-tCANMsgObject txMessage;
-uint32_t txData = 0xABCD1234;
-uint8_t* pui8TxData = (uint8_t*)&txData;
+tCANMsgObject txMessage_1;
+tCANMsgObject txMessage_2;
+uint32_t txData_1 = 0xABCD1234;
+uint32_t txData_2 = 0x00000000;
+uint8_t* pui8TxData_1 = (uint8_t*)&txData_1;
+uint8_t* pui8TxData_2 = (uint8_t*)&txData_2;
 
 
 // Configurar consola UART0
@@ -61,21 +64,33 @@ int main(void) {
 
     UARTprintf("Emisor vivo\n");
 
-    // mensaje
-    txMessage.ui32MsgID = 0x01;
-    txMessage.ui32MsgIDMask = 0;
-    txMessage.ui32Flags = 0;
-    txMessage.ui32MsgLen = 4;
-    txMessage.pui8MsgData = pui8TxData;
+    // mensaje 1 - ID 0x01
+    txMessage_1.ui32MsgID = 0x01;
+    txMessage_1.ui32MsgIDMask = 0;
+    txMessage_1.ui32Flags = 0;
+    txMessage_1.ui32MsgLen = 4;
+    txMessage_1.pui8MsgData = pui8TxData_1;
+
+    // mensaje 2 - ID 0x02
+    txMessage_2.ui32MsgID = 0x02;
+    txMessage_2.ui32MsgIDMask = 0;
+    txMessage_2.ui32Flags = 0;
+    txMessage_2.ui32MsgLen = 4;
+    txMessage_2.pui8MsgData = pui8TxData_2;
 
 
     while(1) {
-        UARTprintf("CAN enviado: 0x%08X\n", txData);
-        CANMessageSet(CAN0_BASE, 1, &txMessage, MSG_OBJ_TYPE_TX);
-        uint32_t status = CANStatusGet(CAN0_BASE, CAN_STS_CONTROL);
-        UARTprintf("Estado CAN: 0x%08X\n", status);
-        txData++;
+        UARTprintf("CAN ID 0x01 enviado: 0x%08X\n", txData_1);
+        CANMessageSet(CAN0_BASE, 1, &txMessage_1, MSG_OBJ_TYPE_TX);
+        //uint32_t status = CANStatusGet(CAN0_BASE, CAN_STS_CONTROL);
+        //UARTprintf("Estado CAN: 0x%08X\n", status);
+        txData_1++;
+        SysCtlDelay(SysCtlClockGet());
         //txMessage.ui32MsgID++;
+        UARTprintf("CAN ID 0x02 enviado: 0x%08X\n", txData_2);
+        CANMessageSet(CAN0_BASE, 2, &txMessage_2, MSG_OBJ_TYPE_TX);
+        txData_2++;
+
         SysCtlDelay(SysCtlClockGet() * 5);
     }
 }
